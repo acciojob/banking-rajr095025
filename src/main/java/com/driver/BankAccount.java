@@ -12,24 +12,30 @@ public class BankAccount {
         this.minBalance = minBalance;
     }
 
-    public BankAccount() {
-
-    }
-
-
     public String generateAccountNumber(int digits, int sum) throws Exception{
         //Each digit of an account number can lie between 0 and 9 (both inclusive)
         //Generate account number having given number of 'digits' such that the sum of digits is equal to 'sum'
         //If it is not possible, throw "Account Number can not be generated" exception
-        long n = (long) Math.pow(10,digits-1);
-        long max = (long) Math.pow(10,digits);
-        for(long i=n; i<max; i++){
-            if(rockySum(i) == sum){
-                return "" + i;
-            }
-
+        if(sum > digits * 9){
+            throw new Exception("Account Number can not be generated");
         }
-        throw new printError("Account Number can not be generated");
+
+        String accountNo = "";
+
+        while(sum > 9){
+            accountNo += 9;
+            sum -= 9;
+        }
+
+        accountNo += sum;
+        sum = 0;
+
+        while(accountNo.length() < digits){
+            accountNo += 0;
+        }
+
+        return accountNo;
+
     }
 
     public void deposit(double amount) {
@@ -41,18 +47,9 @@ public class BankAccount {
     public void withdraw(double amount) throws Exception {
         // Remember to throw "Insufficient Balance" exception, if the remaining amount would be less than minimum balance
         if(this.minBalance > (this.balance - amount)){
-            throw new printError("Insufficient Balance");
+            throw new Exception("Insufficient Balance");
         }
         this.balance -= amount;
-    }
-
-    public double rockySum(long n){
-        long sum = 0;
-        while(n > 0){
-            sum += n % 10;
-            n /= 10;
-        }
-        return sum;
     }
 
     public String getName() {
